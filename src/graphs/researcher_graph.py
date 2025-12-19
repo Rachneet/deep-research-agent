@@ -1,6 +1,13 @@
+"""
+This graph is the worker engine that our Supervisor will delegate tasks to.
+It is a self-contained ReAct loop that takes a single research topic and 
+produces a compressed summary of its findings.
+"""
+
+
 from langgraph.graph import StateGraph, START, END
 from src.states.researcher_state import ResearcherState, ResearcherOutputState
-from src.nodes.research_agent import llm_call, tool_node, should_continue, compress_research
+from src.nodes.researcher_node import llm_call, tool_node, should_continue, compress_research
 
 
 # We initialize a new StateGraph, specifying the input state and, importantly, the output schema for this sub-graph.

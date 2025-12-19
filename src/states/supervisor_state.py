@@ -80,3 +80,19 @@ class SupervisorState(TypedDict):
     # that the draft quality is unacceptably low.
     needs_quality_repair: bool
     
+
+class EvaluationResult(BaseModel):
+    """A Pydantic schema for the structured output of our programmatic quality evaluator."""
+
+    # A 0-10 score on how well the draft covers all aspects of the research brief.
+    comprehensiveness_score: int = Field(description="0-10 score on coverage")
+
+    # A 0-10 score on whether the claims in the draft are factually grounded.
+    accuracy_score: int = Field(description="0-10 score on factual grounding")
+
+    # A 0-10 score on the logical flow and readability of the draft.
+    coherence_score: int = Field(description="0-10 score on flow")
+
+    # Actionable feedback for the researcher on how to improve the draft.
+    specific_critique: str = Field(description="Actionable feedback for the researcher")
+    

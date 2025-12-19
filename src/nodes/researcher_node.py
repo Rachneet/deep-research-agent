@@ -2,7 +2,7 @@ from langchain_core.messages import SystemMessage, ToolMessage, HumanMessage, fi
 from pydantic import BaseModel, Field
 from typing import Literal, List
 
-from states.researcher_state import ResearcherState
+from src.states.researcher_state import ResearcherState
 from src.models.hf_models import get_hf_model
 from src.prompts import (
     research_agent_prompt, 
@@ -71,46 +71,6 @@ def should_continue(state: ResearcherState) -> Literal["tool_node", "compress_re
     # If there are no tool calls, the agent has decided its research is complete, and we proceed to the compression step.
     return "compress_research"  
 
-
-class Summary(BaseModel):
-    """A Pydantic schema for the structured output of the webpage summarization model."""
- 
-   # The main, concise summary of the webpage.
-    summary: str = Field(description="Concise summary of the webpage content")
-
-    # A list of direct quotes or key excerpts to preserve important verbatim information.
-    key_excerpts: str = Field(description="Important quotes and excerpts from the content")
-
-
-def summarize_webpage_content(webpage_content: str) -> str:
-    """Summarizes a single piece of webpage content using our configured summarization model."""
-    try:
-        # We bind our 'Summary' Pydantic schema to the summarization model.
-        # Summarization model
-        summarization_model = get_hf_model(model_name="moonshotai/Kimi-K2-Instruct")
-        structured_model = summarization_model.with_structured_output(Summary)
-
-
-        # We invoke the LLM with our detailed summarization prompt.
-        summary_result = structured_model.invoke([
-            HumanMessage(content=summarize_webpage_prompt.format(
-                webpage_content=webpage_content, 
-                date=get_today_str()
-            ))
-        ])
-
-        # We format the structured output into a clean, human-readable string.
-        formatted_summary = (
-            f"<summary>\n{summary_result.summary}\n</summary>\n\n"
-            f"<key_excerpts>\n{summary_result.key_excerpts}\n</key_excerpts>"
-        )
-        return formatted_summary
-    except Exception as e:
-
-        # If summarization fails, we fall back to a simple truncation of the raw content.
-        print(f"Failed to summarize webpage: {str(e)}")
-        return webpage_content[:1000] + "..." if len(webpage_content) > 1000 else webpage_content
-    
 
 def compress_research(state: ResearcherState) -> dict:
     """The final node in the research sub-graph: it compresses all findings from the ReAct loop into a clean, cited summary."""

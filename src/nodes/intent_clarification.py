@@ -40,7 +40,7 @@ def clarify_with_user(state: AgentState) -> Command[Literal["write_research_brie
     current_date = get_today_str()
 
     # 2. We bind our 'ClarifyWithUser' Pydantic schema to the model. This forces a structured JSON output.
-    model = get_hf_model()
+    model = get_hf_model(model_name="moonshotai/Kimi-K2-Instruct")
     # output_parser = JsonOutputParser(pydantic_object=ClarifyWithUser)
     structured_output_model = model.with_structured_output(ClarifyWithUser)
 
