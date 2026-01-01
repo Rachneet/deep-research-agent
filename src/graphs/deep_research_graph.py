@@ -43,16 +43,25 @@ print("Advanced Systems Loaded: Red Team, Context Pruner, and Evaluator are onli
 import os
 from pathlib import Path
 
-# save the graph for visualization
-# Use absolute path to ensure consistency regardless of where script runs from
-project_root = Path(__file__).parent.parent.parent  # Navigate from src/graphs/deep_research_graph.py to project root
-figures_dir = project_root / "figures"
-figures_dir.mkdir(parents=True, exist_ok=True)  # Create figures/ if it doesn't exist
+def save_graph_visualization(graph, save_path: str):
+    """
+    Save the graph visualization to the specified path.
+    
+    Args:
+        graph: The graph object to visualize.
+        save_path (str): The file path where the visualization will be saved.
+    """
+    try:
+        graph.get_graph().draw_png(output_file_path=save_path)
+        print(f"✓ Graph saved to {save_path}")
+    except Exception as e:
+        print(f"✗ Failed to save graph: {e}")
 
-save_path = str(figures_dir / "deep_research_graph.png")
 
-try:
-    deep_research_agent.get_graph().draw_png(output_file_path=save_path)
-    print(f"✓ Graph saved to {save_path}")
-except Exception as e:
-    print(f"✗ Failed to save graph: {e}")
+if __name__ == "__main__":
+    project_root = Path(__file__).parent.parent.parent  # Navigate from src/graphs/deep_research_graph.py to project root
+    figures_dir = project_root / "figures"
+    figures_dir.mkdir(parents=True, exist_ok=True)  # Create figures/ if it doesn't exist
+    save_path = str(figures_dir / "deep_research_graph.png")
+
+    save_graph_visualization(deep_research_agent, save_path)

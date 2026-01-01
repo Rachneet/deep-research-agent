@@ -42,7 +42,10 @@ def clarify_with_user(state: AgentState) -> Command[Literal["write_research_brie
     # 2. We bind our 'ClarifyWithUser' Pydantic schema to the model. This forces a structured JSON output.
     model = get_hf_model(model_name="moonshotai/Kimi-K2-Instruct")
     # output_parser = JsonOutputParser(pydantic_object=ClarifyWithUser)
-    structured_output_model = model.with_structured_output(ClarifyWithUser)
+    structured_output_model = model.with_structured_output(
+        ClarifyWithUser,
+        method="json_mode"
+    )
 
     # 3. We invoke the LLM with our detailed 'clarify_with_user_instructions' prompt.
     response = structured_output_model.invoke([
@@ -51,6 +54,9 @@ def clarify_with_user(state: AgentState) -> Command[Literal["write_research_brie
             date=current_date
         ))
     ])
+
+    # convert dict response to ClarifyWithUser instance
+    response = ClarifyWithUser.model_validate(response)
 
     # 4. This is the core logic. We check the 'need_clarification' boolean from the LLM's response.
     if response.need_clarification:
