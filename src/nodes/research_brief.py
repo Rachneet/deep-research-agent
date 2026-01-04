@@ -1,5 +1,12 @@
+"""
+This agent acts as an expert analyst. 
+It reads the entire confirmed conversation and distills it into a single, comprehensive research_brief.
+"""
+
+
 from pydantic import BaseModel, Field
 from langgraph.types import Command
+from langgraph.graph import END
 from langchain_core.messages import HumanMessage, get_buffer_string
 from typing import Literal
 
@@ -23,9 +30,11 @@ def write_research_brief(state: AgentState) -> Command[Literal["write_draft_repo
     This node transforms the confirmed conversation history into a single, comprehensive research brief.
     """
     # 1. We bind our 'ResearchQuestion' Pydantic schema to the model to ensure structured output.
-    model = get_hf_model()
-    structured_output_model = model.with_structured_output(ResearchQuestion)
-
+    model = get_hf_model(model_name="moonshotai/Kimi-K2-Instruct")
+    structured_output_model = model.with_structured_output(
+        ResearchQuestion,
+        method="json_mode"
+    )
 
     # 2. We invoke the LLM with our specialized 'transform_messages...' prompt and the conversation history.
     response = structured_output_model.invoke([
@@ -34,6 +43,9 @@ def write_research_brief(state: AgentState) -> Command[Literal["write_draft_repo
             date=get_today_str()
         ))
     ])
+    # print(f"Response: {response}")
+    # convert dict response to ResearchQuestion instance
+    response = ResearchQuestion.model_validate(response)
 
     # 3. We return a Command to update the state with the new research_brief
     #    and direct the graph to proceed to the 'write_draft_report' node.

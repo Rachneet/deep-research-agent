@@ -44,7 +44,7 @@ For the verification message when no clarification is needed:
 """
 
 # This prompt transforms the informal user conversation into a formal, structured research brief.
-transform_messages_into_research_topic_human_msg_prompt = """You will be given a set of messages that have been exchanged so far between yourself and the user. 
+transform_messages_into_research_topic_human_msg_prompt = """You will be given a set of messages that have been exchanged so far between yourself and the user.
 Your job is to translate these messages into a more detailed and concrete research question that will be used to guide the research.
 
 The messages that have been exchanged so far between yourself and the user are:
@@ -89,6 +89,11 @@ Guidelines:
 - For academic or scientific queries, prefer linking directly to the original paper or official journal publication rather than survey papers or secondary summaries.
 - For people, try linking directly to their LinkedIn profile, or their personal website if they have one.
 - If the query is in a specific language, prioritize sources published in that language.
+
+IMPORTANT: Return your response as valid JSON with this exact structure:
+{{
+  "research_brief": "Your detailed research question here"
+}}
 
 REMEMBER:
 Make sure the research brief is in the SAME language as the human messages in the message history.

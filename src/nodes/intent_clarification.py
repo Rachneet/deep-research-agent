@@ -1,3 +1,9 @@
+"""
+Agent node that decides if user clarification is needed before proceeding.
+If clarification is needed, it halts the graph and asks a question.
+If not, it proceeds to generate the research brief.
+"""
+
 from pydantic import BaseModel, Field
 from langgraph.types import Command
 from langchain_core.messages import AIMessage, HumanMessage, get_buffer_string
@@ -60,7 +66,6 @@ def clarify_with_user(state: AgentState) -> Command[Literal["write_research_brie
 
     # 4. This is the core logic. We check the 'need_clarification' boolean from the LLM's response.
     if response.need_clarification:
-
         # If clarification is needed, we return a special 'Command' object.
         # 'goto=END' tells LangGraph to STOP execution here.
         # 'update={...}' adds the AI's clarifying question to the message history before stopping.
@@ -69,7 +74,6 @@ def clarify_with_user(state: AgentState) -> Command[Literal["write_research_brie
             update={"messages": [AIMessage(content=response.question)]}
         )
     else:
-
         # If no clarification is needed, we return another Command.
         # 'goto="write_research_brief"' directs the graph to proceed to the next node.
         # We add the AI's verification message to the history for a clean conversational flow.
@@ -77,3 +81,4 @@ def clarify_with_user(state: AgentState) -> Command[Literal["write_research_brie
             goto="write_research_brief",
             update={"messages": [AIMessage(content=response.verification)]}
         )
+    

@@ -57,10 +57,9 @@ def test_clarify_with_user_vague():
     return result
 
 
-# Add more node tests here...
-# def test_write_research_brief():
-#     """Test the write_research_brief node."""
-#     pass
+def test_write_research_brief():
+    """Test the write_research_brief node."""
+    pass
 
 
 if __name__ == "__main__":
