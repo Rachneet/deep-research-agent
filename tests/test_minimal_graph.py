@@ -8,6 +8,7 @@ from langgraph.graph import StateGraph, START, END
 from src.states.agent_state import AgentState
 from src.nodes.intent_clarification import clarify_with_user
 from src.nodes.research_brief import write_research_brief
+from src.nodes.draft_generation import write_draft_report
 # from src.nodes.draft_generation import write_draft_report
 # from src.nodes.final_report_generation import final_report_generation
 
@@ -19,11 +20,17 @@ def test_clarification_flow():
     print("=" * 50)
 
     # Build minimal graph
+
+    # Define nodes
     builder = StateGraph(AgentState, input_schema=AgentState)
     builder.add_node("clarify_with_user", clarify_with_user)
     builder.add_node("write_research_brief", write_research_brief)
+    builder.add_node("write_draft_report", write_draft_report)
+
+    # Define edges
     builder.add_edge(START, "clarify_with_user")
-    builder.add_edge("write_research_brief", END)
+    builder.add_edge("write_research_brief", "write_draft_report")
+    builder.add_edge("write_draft_report", END)
    
     agent = builder.compile()
 

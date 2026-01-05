@@ -171,6 +171,8 @@ Format the report in clear markdown with proper structure and include source ref
   [2] Source Title: URL
 - Citations are extremely important. Make sure to include these, and pay a lot of attention to getting these right. Users will often use these citations to look into more information.
 </Citation Rules>
+
+{format_instructions}
 """
 
 
